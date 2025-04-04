@@ -1,16 +1,34 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { auth, googleProvider, facebookProvider } from '../../firebase';
+import {
+  signInWithPopup,
+  signOut,
+  GithubAuthProvider, // Add this import
+} from 'firebase/auth';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Initialize with a default user and allow new users to be added
-  const [users, setUsers] = useState([{ username: 'user', password: 'password' }]);
-  const [user, setUser] = useState(null); // Current logged-in user
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [users, setUsers] = useState(() => {
+    const savedUsers = localStorage.getItem('users');
+    return savedUsers ? JSON.parse(savedUsers) : [{ username: 'user', password: 'password' }];
+  });
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+    localStorage.setItem('users', JSON.stringify(users));
+  }, [user, users]);
 
   const login = (username, password) => {
-    const foundUser = users.find(
-      (u) => u.username === username && u.password === password
-    );
+    const foundUser = users.find((u) => u.username === username && u.password === password);
     if (foundUser) {
       setUser({ username });
       return true;
@@ -19,23 +37,56 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = (username, password) => {
-    // Check if username already exists
     if (users.some((u) => u.username === username)) {
-      return false; // User already exists
+      return false;
     }
-    // Add new user
-    const newUser = { username, password };
-    setUsers([...users, newUser]);
-    setUser({ username }); // Auto-login after signup
+    const newUsers = [...users, { username, password }];
+    setUsers(newUsers);
+    setUser({ username });
     return true;
   };
 
+  const googleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const username = result.user.email.split('@')[0];
+      setUser({ username });
+    } catch (error) {
+      console.error('Google login failed:', error);
+    }
+  };
+
+  const facebookLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const username = result.user.displayName || result.user.email.split('@')[0];
+      setUser({ username });
+    } catch (error) {
+      console.error('Facebook login failed:', error);
+    }
+  };
+
+  const githubLogin = async () => {
+    try {
+      const provider = new GithubAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const username = result.user.displayName || result.user.email.split('@')[0];
+      setUser({ username });
+    } catch (error) {
+      console.error('GitHub login failed:', error);
+    }
+  };
+
   const logout = () => {
-    setUser(null);
+    signOut(auth).then(() => {
+      setUser(null);
+    }).catch((error) => {
+      console.error('Logout failed:', error);
+    });
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, googleLogin, facebookLogin, githubLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );
