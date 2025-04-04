@@ -1,9 +1,10 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { auth, googleProvider, facebookProvider } from '../../firebase';
+import { auth, googleProvider, facebookProvider, githubProvider } from '../../firebase';
 import {
   signInWithPopup,
   signOut,
-  GithubAuthProvider, // Add this import
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 
 const AuthContext = createContext();
@@ -13,10 +14,6 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [users, setUsers] = useState(() => {
-    const savedUsers = localStorage.getItem('users');
-    return savedUsers ? JSON.parse(savedUsers) : [{ username: 'user', password: 'password' }];
-  });
 
   useEffect(() => {
     if (user) {
@@ -24,33 +21,34 @@ export const AuthProvider = ({ children }) => {
     } else {
       localStorage.removeItem('user');
     }
-    localStorage.setItem('users', JSON.stringify(users));
-  }, [user, users]);
+  }, [user]);
 
-  const login = (username, password) => {
-    const foundUser = users.find((u) => u.username === username && u.password === password);
-    if (foundUser) {
-      setUser({ username });
+  const login = async (email, password) => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      setUser({ email: result.user.email });
       return true;
-    }
-    return false;
-  };
-
-  const signup = (username, password) => {
-    if (users.some((u) => u.username === username)) {
+    } catch (error) {
+      console.error('Manual login failed:', error);
       return false;
     }
-    const newUsers = [...users, { username, password }];
-    setUsers(newUsers);
-    setUser({ username });
-    return true;
+  };
+
+  const signup = async (email, password) => {
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      setUser({ email: result.user.email });
+      return true;
+    } catch (error) {
+      console.error('Manual signup failed:', error);
+      return false;
+    }
   };
 
   const googleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const username = result.user.email.split('@')[0];
-      setUser({ username });
+      setUser({ email: result.user.email });
     } catch (error) {
       console.error('Google login failed:', error);
     }
@@ -59,8 +57,7 @@ export const AuthProvider = ({ children }) => {
   const facebookLogin = async () => {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
-      const username = result.user.displayName || result.user.email.split('@')[0];
-      setUser({ username });
+      setUser({ email: result.user.email });
     } catch (error) {
       console.error('Facebook login failed:', error);
     }
@@ -68,10 +65,8 @@ export const AuthProvider = ({ children }) => {
 
   const githubLogin = async () => {
     try {
-      const provider = new GithubAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const username = result.user.displayName || result.user.email.split('@')[0];
-      setUser({ username });
+      const result = await signInWithPopup(auth, githubProvider);
+      setUser({ email: result.user.email });
     } catch (error) {
       console.error('GitHub login failed:', error);
     }
