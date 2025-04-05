@@ -189,8 +189,8 @@
     width: 24px;
     cursor: pointer;
     transition: all 0.3s ease;
-    filter: brightness(0) invert(1) hue-rotate(180deg); /* Cyan color instead of black */
-    box-shadow: 0 0 5px rgba(0, 255, 255, 0.7); /* Cyan glow effect */
+    filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 0, 204, 0.7)); /* White with pink glow */
+
 }
 
 .search-box img:hover {
