@@ -14,7 +14,6 @@
   overflow: hidden;
 }
 
-/* Subtle background animation */
 .sidebar::before {
   content: '';
   position: absolute;
@@ -34,26 +33,25 @@
 
 .sidebar .top .menu {
   width: 35px;
-  filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 0, 204, 0.7)); /* White with pink glow */
+  filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 0, 204, 0.7));
 }
 
 .sidebar img {
   width: 20px;
-  filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 0, 204, 0.7)); /* White with pink glow */
+  filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 0, 204, 0.7));
   transition: all 0.4s ease;
   z-index: 1;
 }
 
 .sidebar img:hover {
   transform: scale(1.3) rotate(15deg);
-  
 }
 
 .sidebar .menu {
   display: block;
   margin-left: 10px;
   cursor: pointer;
-  filter: hue-rotate(180deg) drop-shadow(0 0 8px rgba(0, 255, 255, 0.7)); /* Cyan tint */
+  filter: hue-rotate(180deg) drop-shadow(0 0 8px rgba(0, 255, 255, 0.7));
 }
 
 .sidebar .menu:hover {
@@ -121,7 +119,7 @@
 }
 
 .sidebar .recent-entry img {
-  filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 0, 204, 0.7)); /* White with pink glow */
+  filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 0, 204, 0.7));
 }
 
 .sidebar .recent-entry img:hover {
@@ -138,7 +136,7 @@
 .sidebar .bottom {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Added gap between bottom items */
+  gap: 15px;
   z-index: 1;
 }
 
@@ -149,32 +147,110 @@
   gap: 8px;
   padding: 10px 12px;
   border-radius: 50px;
-  color: #ffd700;
   font-family: 'Orbitron', sans-serif;
   font-size: 14px;
   transition: all 0.4s ease;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
   max-width: 120px;
+  position: relative;
 }
 
-.sidebar .bottom-item:hover {
-  background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 105, 180, 0.2));
+.sidebar .bottom-item.help-item {
+  color: #00ffff;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+}
+
+.sidebar .bottom-item.help-item:hover {
+  background: linear-gradient(90deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 204, 0.2));
+  transform: translateX(5px);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+  color: #fff;
+}
+
+.sidebar .bottom-item.activity-item {
+  color: #ff00cc;
+  background: rgba(255, 0, 204, 0.05);
+  border: 1px solid rgba(255, 0, 204, 0.3);
+  box-shadow: 0 0 8px rgba(255, 0, 204, 0.2);
+}
+
+.sidebar .bottom-item.activity-item:hover {
+  background: linear-gradient(90deg, rgba(255, 0, 204, 0.2), rgba(0, 255, 255, 0.2));
+  transform: translateX(5px);
+  box-shadow: 0 0 15px rgba(255, 0, 204, 0.6);
+  color: #fff;
+}
+
+.sidebar .bottom-item.settings-item {
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+}
+
+.sidebar .bottom-item.settings-item:hover {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 0, 204, 0.2));
   transform: translateX(5px);
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
   color: #fff;
 }
 
-/* Media Queries */
 @media (max-width: 600px) {
   .sidebar {
     display: none;
   }
 }
 
-/* Fade-in Animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Additional panel styling */
+.activity-panel, .settings-panel {
+  margin-top: 10px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 105, 180, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.panel-title {
+  color: #ff00cc;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.activity-item {
+  color: #00ffff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  margin: 5px 0;
+}
+
+.settings-panel p {
+  color: #ffd700;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  margin: 5px 0;
+}
+
+.settings-panel button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background: linear-gradient(45deg, #ff00cc, #00ffff);
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.settings-panel button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 0, 204, 0.5);
 }

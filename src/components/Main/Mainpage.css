@@ -196,7 +196,7 @@
 .search-box img:hover {
     transform: scale(1.2);
     filter: brightness(0) invert(1) hue-rotate(180deg) brightness(1.2); /* Brighter cyan on hover */
-    box-shadow: 0 0 10px rgba(0, 255, 255, 1); /* Enhanced cyan glow */
+    
 }
 
 .main .bottom-info {

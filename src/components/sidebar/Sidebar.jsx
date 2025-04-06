@@ -5,11 +5,34 @@ import { Context } from '../context/Context';
 
 const Sidebar = () => {
   const [extended, setExtended] = useState(false);
+  const [showActivity, setShowActivity] = useState(false); // State for Activity panel
+  const [showSettings, setShowSettings] = useState(false); // State for Settings panel
   const { onSent, prevPrompts, setRecentPrompt, newChat } = useContext(Context);
 
   const loadPrompt = async (prompt) => {
     setRecentPrompt(prompt);
     onSent(prompt);
+  };
+
+  // Help functionality: Show an alert with a help message
+  const handleHelp = () => {
+    alert(
+      'Welcome to the ChatBot Help!\n\n- Type a prompt in the input box to ask questions.\n- Click "New Chat" to start a fresh conversation.\n- Use the sidebar to revisit recent prompts.\n\nMore features coming soon!'
+    );
+  };
+
+  // Activity functionality: Toggle a list of recent prompts
+  const handleActivity = () => {
+    setShowActivity(!showActivity);
+    setShowSettings(false); // Close settings if open
+    console.log('Activity toggled:', prevPrompts);
+  };
+
+  // Settings functionality: Toggle a placeholder settings panel
+  const handleSettings = () => {
+    setShowSettings(!showSettings);
+    setShowActivity(false); // Close activity if open
+    console.log('Settings toggled');
   };
 
   return (
@@ -42,18 +65,43 @@ const Sidebar = () => {
         ) : null}
       </div>
       <div className="bottom">
-        <div className="bottom-item recent-entry">
+        <div onClick={handleHelp} className="bottom-item recent-entry">
           <img src={assets.question_icon} alt="Help" />
           {extended ? <p>Help</p> : null}
         </div>
-        <div className="bottom-item recent-entry">
+        <div onClick={handleActivity} className="bottom-item recent-entry">
           <img src={assets.history_icon} alt="Activity" />
           {extended ? <p>Activity</p> : null}
         </div>
-        <div className="bottom-item recent-entry">
+        {/* Activity panel (simple inline version) */}
+        {showActivity && extended && (
+          <div className="activity-panel">
+            <p className="panel-title">Recent Activity</p>
+            {prevPrompts.length > 0 ? (
+              prevPrompts.slice(0, 3).map((item, index) => (
+                <p key={index} className="activity-item">
+                  {item.slice(0, 18)}...
+                </p>
+              ))
+            ) : (
+              <p>No recent activity</p>
+            )}
+          </div>
+        )}
+        <div onClick={handleSettings} className="bottom-item recent-entry">
           <img src={assets.setting_icon} alt="Settings" />
           {extended ? <p>Settings</p> : null}
         </div>
+        {/* Settings panel (simple inline version) */}
+        {showSettings && extended && (
+          <div className="settings-panel">
+            <p className="panel-title">Settings</p>
+            <p>Theme: Futuristic (default)</p>
+            <button onClick={() => console.log('Toggle theme placeholder')}>
+              Toggle Theme
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
